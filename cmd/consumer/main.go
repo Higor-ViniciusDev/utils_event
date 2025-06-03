@@ -3,12 +3,12 @@ package main
 import (
 	"fmt"
 
-	"github.com/Higor-ViniciusDev/utils/pkg/rabbitMQ"
+	"github.com/Higor-ViniciusDev/utils/pkg/rabbitmq"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 func main() {
-	ch, err := rabbitMQ.OpenChannel()
+	ch, err := rabbitmq.OpenChannel()
 
 	if err != nil {
 		panic(err)
@@ -22,7 +22,7 @@ func main() {
 
 	// Inicia o consumidor para escutar mensagens na fila
 	// e envia as mensagens recebidas para o canal de saída
-	go rabbitMQ.Consumer(ch, out)
+	go rabbitmq.Consumer(ch, out)
 
 	for msg := range out {
 		// Processa a mensagem recebida

@@ -1,4 +1,4 @@
-package rabbitMQ
+package rabbitmq
 
 import (
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -24,13 +24,13 @@ func OpenChannel() (*amqp.Channel, error) {
 func Consumer(ch *amqp.Channel, out chan amqp.Delivery) error {
 	// Inicia a escuta na fila e retorna um canal de mensagens recebidas
 	msgs, err := ch.Consume(
-		"minhaFila", // Nome da fila
-		"go-chan",   // Consumer tag (pode ser vazio)
-		false,       // Auto-acknowledge - Dar baixa na mensagem automaticamente e já pode remover da fila
-		false,       // Exclusivo - Não exclusivo para este consumidor
-		false,       // Não compartilhar com outros consumidores
-		false,       // Não esperar confirmação de entrega
-		nil,         // Argumentos adicionais - pode ser nil
+		"minhaFila",   // Nome da fila
+		"go-consumer", // Consumer tag (pode ser vazio)
+		false,         // Auto-acknowledge - Dar baixa na mensagem automaticamente e já pode remover da fila
+		false,         // Exclusivo - Não exclusivo para este consumidor
+		false,         // Não compartilhar com outros consumidores
+		false,         // Não esperar confirmação de entrega
+		nil,           // Argumentos adicionais - pode ser nil
 	)
 
 	if err != nil {
@@ -38,8 +38,26 @@ func Consumer(ch *amqp.Channel, out chan amqp.Delivery) error {
 	}
 
 	for msg := range msgs {
-		out <- msg     // Envia a mensagem recebida para o canal de saída
-		msg.Ack(false) // Confirma o recebimento da mensagem
+		out <- msg // Envia a mensagem recebida para o canal de saída
+	}
+
+	return nil
+}
+
+func Publish(ch *amqp.Channel, body string, exName string) error {
+	err := ch.Publish(
+		exName,
+		"",
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: "text/plain",
+			Body:        []byte(body),
+		},
+	)
+
+	if err != nil {
+		return err
 	}
 
 	return nil
