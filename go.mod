@@ -1,4 +1,4 @@
-module github.com/Higor-ViniciusDev/utils
+module github.com/Higor-ViniciusDev/utils_event
 
 go 1.22.2
 
